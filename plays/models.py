@@ -23,11 +23,16 @@ class Match(models.Model):
 
     def __unicode__(self):
         match_name = "%s - %s" % (self.home_team.name, self.guest_team.name)
-        if self.home_team_scored:
-            ht_scored = self.home_team_scored
-            gt_scored = self.guest_team_scored
-            return unicode(match_name + (" %d : %d" % (ht_scored, gt_scored)))
-        return unicode(match_name)
+        # Goal.objects.filter(match=self, player_scored.team=self.home_team)
+
+        players = Person.objects.filter(team=self.home_team)
+        goals = Goal.objects.filter(match=self)
+
+        return match_name
+
+        # ht_scored = self.home_team_scored
+        # gt_scored = self.guest_team_scored
+        # return unicode(match_name + (" %d : %d" % (ht_scored, gt_scored)))
 
 
 class Person(models.Model):
@@ -71,23 +76,48 @@ class Match(models.Model):
     home_team = models.ForeignKey(Team, related_name="home_team", null=False, blank=False)
     guest_team = models.ForeignKey(Team, related_name="guest_team", null=False, blank=False)
 
+    def __unicode__(self):
+        return unicode("%s - %s" % (self.home_team.name, self.guest_team.name))
+
 
 class Goal(models.Model):
     player_scored = models.ForeignKey(Person, null=False, related_name="player_scored")
     player_assisted = models.ForeignKey(Person, null=True, blank=True, related_name="player_assisted")
     own_goal = models.BooleanField(default=False)
-    number = models.IntegerField(null=True, blank=True)  #Поле для учета порядка гола (можно указывать минуты,
+    match = models.ForeignKey(Match, null=False, blank=False)
+    minute = models.IntegerField(null=True, blank=True)  #Поле для учета порядка гола (можно указывать минуты,
                                                          #Можно указывать порядковый номер для учета, как шел матч.
+    is_penalty = models.BooleanField(default=False, null=False)
+
+    def __unicode__(self):
+        assisted = (" (%s)" % (self.player_assisted.last_name,)) if (self.player_assisted) else ""
+        minute = (", %d'"% self.minute) if self.minute else ""
+        own_goal = u" (аг)" if self.own_goal else u""
+        return unicode(self.player_scored.last_name + assisted + minute + own_goal)
+
+    def __save__(self, *args, **kwargs):
+        super(Goal, self).save(*args, **kwargs)
+        if not self.own_goal:
+            team_scored = self.player_scored.team
+        else:
+            player_scored_team = self.player_scored.team
+            tmp = [self.match.home_team, self.match.guest_team].remove(player_scored_team)
+            team_scored = tmp.pop()
 
 class Card (models.Model):
     RED = 'R'
     YELLOW = 'Y'
     CARD_TYPES = (
-        (RED, "Красная карточка"),
-        (YELLOW, "Желтая карточка"),
+        (RED, "кк"),
+        (YELLOW, "жк"),
     )
 
     type = models.CharField(max_length=1, choices=CARD_TYPES)
     person = models.ForeignKey(Person, null=False, blank=False)
-    number = models.IntegerField(null=True, blank=True)  #Тот же комментарий, что и для такого же поля в классе Goal
+    minute = models.IntegerField(null=True, blank=True)  #Тот же комментарий, что и для такого же поля в классе Goal
+
+    def __unicode__(self):
+        card_type = unicode(" (%s)" % self.type)
+        minute = unicode(", %d'" % self.minute) if self.minute else ""
+        return unicode (self.person.last_name + minute + card_type)
 
