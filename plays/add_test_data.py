@@ -51,50 +51,59 @@ def add_test_data():
                    is_captain=True,
                    start_date=datetime.date.today(),
                    cell_phone="89123711249",
-                   team=mipt_team)
+                   team=anytime_team)
     ahyan.save()
 
     mipt_anytime = Match(date=datetime.date.today(),
                      time=datetime.datetime.now(),
                      home_team=mipt_team,
-                     guest_team=anytime_team)
+                     guest_team=anytime_team,
+                     guest_team_score=0,
+                     home_team_score=0)
     mipt_anytime.save()
 
     anytime_mipt = Match(date=datetime.date.today().replace(day=30),
                      time=datetime.datetime.now(),
                      home_team=anytime_team,
-                     guest_team=mipt_team)
+                     guest_team=mipt_team,
+                     guest_team_score=0,
+                     home_team_score=0)
     anytime_mipt.save()
 
-    # g1 = Goal(player_scored=stan,
-    #           player_assisted=burov,
-    #           own_goal=False,
-    #           match=mipt_anytime,
-    #           minute=11,
-    #           is_penalty=False)
-    # g1.save()
-    #
-    # g2 = Goal(player_scored=stan,
-    #           player_assisted=den,
-    #           own_goal=False,
-    #           match=mipt_anytime,
-    #           minute=15,
-    #           is_penalty=False)
-    # g2.save()
-    #
-    # g3 = Goal(player_scored=burov,
-    #           own_goal=True,
-    #           match=mipt_anytime,
-    #           minute=58,
-    #           is_penalty=False)
-    # g3.save()
-    #
-    # g4 = Goal(player_scored=ahyan,
-    #           own_goal=False,
-    #           match=mipt_anytime,
-    #           minute=59,
-    #           is_penalty=False)
-    # g4.save()
+    g1 = Goal(player_scored=stan,
+              player_assisted=burov,
+              own_goal=False,
+              match=mipt_anytime,
+              minute=11,
+              is_penalty=False)
+    g1.save()
+    print mipt_anytime.home_team_score, mipt_anytime.guest_team_score
+
+
+    g2 = Goal(player_scored=stan,
+              player_assisted=den,
+              own_goal=False,
+              match=mipt_anytime,
+              minute=15,
+              is_penalty=False)
+    g2.save()
+    print mipt_anytime.home_team_score, mipt_anytime.guest_team_score
+
+    g3 = Goal(player_scored=burov,
+              own_goal=True,
+              match=mipt_anytime,
+              minute=58,
+              is_penalty=False)
+    g3.save()
+    print mipt_anytime.home_team_score, mipt_anytime.guest_team_score
+
+    g4 = Goal(player_scored=ahyan,
+              own_goal=False,
+              match=mipt_anytime,
+              minute=59,
+              is_penalty=False)
+    g4.save()
+    print mipt_anytime.home_team_score, mipt_anytime.guest_team_score
 
     card1 = Card(type='Y',
                  person=den,
