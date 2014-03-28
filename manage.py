@@ -10,4 +10,5 @@ if __name__ == "__main__":
     execute_from_command_line(sys.argv)
 
     from plays.add_test_data import add_test_data
+    print "Adding test data to database ..."
     add_test_data()

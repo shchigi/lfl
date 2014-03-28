@@ -18,8 +18,8 @@ class Match(models.Model):
     time = models.TimeField(null=True, blank=True)
     home_team = models.ForeignKey(Team, related_name="home_team")
     guest_team = models.ForeignKey(Team, related_name="guest_team")
-    home_team_scored = models.IntegerField(null=True, blank=True)
-    guest_team_scored = models.IntegerField(null=True, blank=True)
+    home_team_score = models.IntegerField(null=True, blank=True)
+    guest_team_score = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):
         match_name = "%s - %s" % (self.home_team.name, self.guest_team.name)
@@ -75,9 +75,26 @@ class Match(models.Model):
     time = models.TimeField(null=True, blank=True)
     home_team = models.ForeignKey(Team, related_name="home_team", null=False, blank=False)
     guest_team = models.ForeignKey(Team, related_name="guest_team", null=False, blank=False)
+    home_team_score = models.PositiveSmallIntegerField(null=False, blank=True, default=0)
+    guest_team_score = models.PositiveSmallIntegerField(null=False, blank=True,  default=0)
 
     def __unicode__(self):
         return unicode("%s - %s" % (self.home_team.name, self.guest_team.name))
+
+    def save(self, *args, **kwargs):
+        goals = Goal.objects.filter(match=self)
+        home_team_score = guest_team_score = 0
+        for goal in goals:
+            isHomeT = (goal.player_scored.team == self.home_team)
+            if isHomeT == goal.own_goal:
+                guest_team_score += 1
+            else:
+                home_team_score += 1
+        if guest_team_score == self.guest_team_score and guest_team_score == self.guest_team_score:
+            super(Match, self).save(*args, **kwargs)
+        else:
+            raise ValidationError("Error while updating match %s, pk=%d. "
+                                  "Please check up matches in database" % (self.__unicode__(),  self.pk))
 
 
 class Goal(models.Model):
@@ -85,8 +102,7 @@ class Goal(models.Model):
     player_assisted = models.ForeignKey(Person, null=True, blank=True, related_name="player_assisted")
     own_goal = models.BooleanField(default=False)
     match = models.ForeignKey(Match, null=False, blank=False)
-    minute = models.IntegerField(null=True, blank=True)  #Поле для учета порядка гола (можно указывать минуты,
-                                                         #Можно указывать порядковый номер для учета, как шел матч.
+    minute = models.PositiveSmallIntegerField(null=True, blank=True)
     is_penalty = models.BooleanField(default=False, null=False)
 
     def __unicode__(self):
@@ -95,14 +111,22 @@ class Goal(models.Model):
         own_goal = u" (аг)" if self.own_goal else u""
         return unicode(self.player_scored.last_name + assisted + minute + own_goal)
 
-    def __save__(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         super(Goal, self).save(*args, **kwargs)
         if not self.own_goal:
             team_scored = self.player_scored.team
         else:
             player_scored_team = self.player_scored.team
-            tmp = [self.match.home_team, self.match.guest_team].remove(player_scored_team)
+            tmp = [self.match.home_team, self.match.guest_team]
+            tmp.remove(player_scored_team)
             team_scored = tmp.pop()
+        isHomeTeamScored = (self.match.home_team == team_scored)
+        if isHomeTeamScored:
+            self.match.home_team_score += 1
+        else:
+            self.match.guest_team_score += 1
+        self.match.save()
+
 
 class Card (models.Model):
     RED = 'R'
@@ -114,7 +138,7 @@ class Card (models.Model):
 
     type = models.CharField(max_length=1, choices=CARD_TYPES)
     person = models.ForeignKey(Person, null=False, blank=False)
-    minute = models.IntegerField(null=True, blank=True)  #Тот же комментарий, что и для такого же поля в классе Goal
+    minute = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def __unicode__(self):
         card_type = unicode(" (%s)" % self.type)
