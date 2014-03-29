@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.core.exceptions import ValidationError
+
 import re
 
 
@@ -81,20 +82,8 @@ class Match(models.Model):
     def __unicode__(self):
         return unicode("%s - %s" % (self.home_team.name, self.guest_team.name))
 
-    def save(self, *args, **kwargs):
-        goals = Goal.objects.filter(match=self)
-        home_team_score = guest_team_score = 0
-        for goal in goals:
-            isHomeT = (goal.player_scored.team == self.home_team)
-            if isHomeT == goal.own_goal:
-                guest_team_score += 1
-            else:
-                home_team_score += 1
-        if guest_team_score == self.guest_team_score and guest_team_score == self.guest_team_score:
-            super(Match, self).save(*args, **kwargs)
-        else:
-            raise ValidationError("Error while updating match %s, pk=%d. "
-                                  "Please check up matches in database" % (self.__unicode__(),  self.pk))
+    def __str__(self):
+        return "%s - %s" % (self.home_team.name, self.guest_team.name)
 
 
 class Goal(models.Model):
@@ -128,6 +117,7 @@ class Goal(models.Model):
         self.match.save()
 
 
+
 class Card (models.Model):
     RED = 'R'
     YELLOW = 'Y'
@@ -145,3 +135,5 @@ class Card (models.Model):
         minute = unicode(", %d'" % self.minute) if self.minute else ""
         return unicode (self.person.last_name + minute + card_type)
 
+
+from verify_model import check_goals_in_match
