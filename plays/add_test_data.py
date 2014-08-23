@@ -7,50 +7,50 @@ from models import Person, Team, Match, Card, Goal
 
 
 def add_test_data():
-    mipt_team = Team(name="Физтех", start_date=datetime.date.today())
+    mipt_team = Team(name=u"Физтех", start_date=datetime.date.today())
     mipt_team.save()
 
-    anytime_team = Team(name="Энитайм", start_date=datetime.date.today())
+    anytime_team = Team(name=u"Энитайм", start_date=datetime.date.today())
     anytime_team.save()
 
-    den = Person(first_name="Денис",
-                 last_name="Щигельский",
+    den = Person(first_name=u"Денис",
+                 last_name=u"Щигельский",
                  position=Person.BACK,
                  is_active=True,
                  is_captain=False,
                  start_date=datetime.date.today(),
-                 cell_phone="+79151164158",
-                 email="denis.shchigelsky@gmail.com",
+                 cell_phone=u"+79151164158",
+                 email=u"denis.shchigelsky@gmail.com",
                  team=mipt_team)
     den.save()
 
-    stan = Person(first_name="Илья",
-                 last_name="Станиславский",
+    stan = Person(first_name=u"Илья",
+                 last_name=u"Станиславский",
                  position=Person.HALFBACK,
                  is_active=True,
                  is_captain=False,
                  start_date=datetime.date.today(),
-                 cell_phone="+79670614948",
+                 cell_phone=u"+79670614948",
                  team=mipt_team)
     stan.save()
 
-    burov = Person(first_name="Александр",
-                 last_name="Буров",
+    burov = Person(first_name=u"Александр",
+                 last_name=u"Буров",
                  position=Person.FORWARD,
                  is_active=True,
                  is_captain=True,
                  start_date=datetime.date.today(),
-                 cell_phone="89197711249",
+                 cell_phone=u"89197711249",
                  team=mipt_team)
     burov.save()
 
-    ahyan = Person(first_name="Ара",
-                   last_name="Ахян",
+    ahyan = Person(first_name=u"Ара",
+                   last_name=u"Ахян",
                    position=Person.FORWARD,
                    is_active=True,
                    is_captain=True,
                    start_date=datetime.date.today(),
-                   cell_phone="89123711249",
+                   cell_phone=u"89123711249",
                    team=anytime_team)
     ahyan.save()
 

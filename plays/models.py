@@ -17,23 +17,13 @@ class Team(models.Model):
 class Match(models.Model):
     date = models.DateField(null=True, blank=True)
     time = models.TimeField(null=True, blank=True)
-    home_team = models.ForeignKey(Team, related_name="home_team")
-    guest_team = models.ForeignKey(Team, related_name="guest_team")
-    home_team_score = models.IntegerField(null=True, blank=True)
-    guest_team_score = models.IntegerField(null=True, blank=True)
+    home_team = models.ForeignKey(Team, related_name="home_team", null=False, blank=False)
+    guest_team = models.ForeignKey(Team, related_name="guest_team", null=False, blank=False)
+    home_team_score = models.PositiveSmallIntegerField(null=False, blank=True, default=0)
+    guest_team_score = models.PositiveSmallIntegerField(null=False, blank=True,  default=0)
 
     def __unicode__(self):
-        match_name = "%s - %s" % (self.home_team.name, self.guest_team.name)
-        # Goal.objects.filter(match=self, player_scored.team=self.home_team)
-
-        players = Person.objects.filter(team=self.home_team)
-        goals = Goal.objects.filter(match=self)
-
-        return match_name
-
-        # ht_scored = self.home_team_scored
-        # gt_scored = self.guest_team_scored
-        # return unicode(match_name + (" %d : %d" % (ht_scored, gt_scored)))
+        return unicode("%s - %s" % (self.home_team.name, self.guest_team.name))
 
 
 class Person(models.Model):
@@ -60,7 +50,8 @@ class Person(models.Model):
     cell_phone = models.CharField(max_length=12)
     email = models.EmailField(null=True, blank=True)
     team = models.ForeignKey(Team)
-    matches = models.ManyToManyField(Match)
+    matches_played = models.ManyToManyField(Match, related_name='matches_played')
+    matches_intended = models.ManyToManyField(Match, related_name='matches_intended')
 
     def clean(self):
         cell_phone_template = "(([+]7)|8)\d{10}"
@@ -69,21 +60,6 @@ class Person(models.Model):
 
     def __unicode__(self):
         return unicode("%(name)s %(sirname)s" % {"name": self.first_name, "sirname": self.last_name})
-
-
-class Match(models.Model):
-    date = models.DateField(null=True, blank=True)
-    time = models.TimeField(null=True, blank=True)
-    home_team = models.ForeignKey(Team, related_name="home_team", null=False, blank=False)
-    guest_team = models.ForeignKey(Team, related_name="guest_team", null=False, blank=False)
-    home_team_score = models.PositiveSmallIntegerField(null=False, blank=True, default=0)
-    guest_team_score = models.PositiveSmallIntegerField(null=False, blank=True,  default=0)
-
-    def __unicode__(self):
-        return unicode("%s - %s" % (self.home_team.name, self.guest_team.name))
-
-    def __str__(self):
-        return "%s - %s" % (self.home_team.name, self.guest_team.name)
 
 
 class Goal(models.Model):
@@ -95,13 +71,19 @@ class Goal(models.Model):
     is_penalty = models.BooleanField(default=False, null=False)
 
     def __unicode__(self):
-        assisted = (" (%s)" % (self.player_assisted.last_name,)) if (self.player_assisted) else ""
+        assisted = (" (%s)" % (self.player_assisted.last_name,)) if self.player_assisted else ""
         minute = (", %d'"% self.minute) if self.minute else ""
         own_goal = u" (аг)" if self.own_goal else u""
         return unicode(self.player_scored.last_name + assisted + minute + own_goal)
 
-    def save(self, *args, **kwargs):
-        super(Goal, self).save(*args, **kwargs)
+    def clean(self):
+
+        #check if players play in a match
+        if ((not self.player_scored.matches_played.filter(pk=self.match.pk).exists()) or
+           (self.player_assisted is not None and not self.player_assisted.matches_played.filter(pk=self.match.pk).exists())):
+            raise ValidationError("Players in goal do not participate in match. Please add them.")
+
+        #change score in corresponding match
         if not self.own_goal:
             team_scored = self.player_scored.team
         else:
@@ -115,7 +97,6 @@ class Goal(models.Model):
         else:
             self.match.guest_team_score += 1
         self.match.save()
-
 
 
 class Card (models.Model):
@@ -133,7 +114,6 @@ class Card (models.Model):
     def __unicode__(self):
         card_type = unicode(" (%s)" % self.type)
         minute = unicode(", %d'" % self.minute) if self.minute else ""
-        return unicode (self.person.last_name + minute + card_type)
+        return unicode(self.person.last_name + minute + card_type)
 
 
-from verify_model import check_goals_in_match
