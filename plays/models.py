@@ -98,6 +98,17 @@ class Goal(models.Model):
             self.match.guest_team_score += 1
         self.match.save()
 
+    def delete(self, *args, **kwargs):
+        #decrease score in corresponding match
+        team_scored = self.player_scored.team
+        if self.match.home_team == team_scored:
+            self.match.home_team_score -= 1
+        else:
+            self.match.guest_team_score -=1
+        self.match.save()
+        #call super method to drop object from database
+        super(Goal, self).delete(*args, **kwargs)
+
 
 class Card (models.Model):
     RED = 'R'
@@ -115,5 +126,3 @@ class Card (models.Model):
         card_type = unicode(" (%s)" % self.type)
         minute = unicode(", %d'" % self.minute) if self.minute else ""
         return unicode(self.person.last_name + minute + card_type)
-
-
