@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Состав команды {{ team_name }}</title>
+</head>
+<body>
+    <h3>Состав команды:</h3>
+    <p>
+            Вставить сюда ссылку на детали каждого игрока
+    </p>
+    <ol>
+       {% for player in players %}
+           <li>
+               <a href="">
+                   {{ player.first_name }} {{ player.last_name }}
+                   {% if player.is_captain %} (c)
+                   {% endif %}
+               </a>
+           </li>
+       {% endfor %}
+
+    </ol>
+</body>
+</html>
