@@ -6,6 +6,7 @@ from django.http import HttpResponse
 
 from plays.models import Team, Person
 
+
 def login(request):
     state = "Please log in below..."
     username = password = ''
@@ -34,8 +35,10 @@ def login(request):
         context_instance=RequestContext(request)
     )
 
+
 def index(request):
     return render_to_response('index.html')
+
 
 def roster(request):
     #Change to pick custom team, not only Phystech
@@ -46,3 +49,9 @@ def roster(request):
     return render_to_response('roster.html',
                               {'team_name': team_name,
                                'players': players})
+
+
+def player_details(request, player_id):
+    player = Person.objects.get(id=int(player_id))
+    return  render_to_response('player.html',
+                               {'player': player})

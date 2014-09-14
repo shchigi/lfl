@@ -11,7 +11,7 @@
     <ol>
        {% for player in players %}
            <li>
-               <a href="">
+               <a href="{% url 'plays.views.player_details' player_id=player.id %}">
                    {{ player.first_name }} {{ player.last_name }}
                    {% if player.is_captain %} (c)
                    {% endif %}

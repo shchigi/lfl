@@ -11,5 +11,8 @@ urlpatterns = patterns('',
         'plays.views.index'),
 
     url(r'^roster/$',
-        'plays.views.roster')
+        'plays.views.roster'),
+
+    url(r'^roster/(?P<player_id>\d+)/',
+        'plays.views.player_details')
 )

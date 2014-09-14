@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 import re
 
@@ -26,7 +27,7 @@ class Match(models.Model):
         return unicode("%s - %s" % (self.home_team.name, self.guest_team.name))
 
 
-class Person(models.Model):
+class Person(models.Model, ):
     GOALKEEPER = 'G'
     BACK = 'B'
     HALFBACK = 'H'
@@ -52,6 +53,8 @@ class Person(models.Model):
     team = models.ForeignKey(Team)
     matches_played = models.ManyToManyField(Match, related_name='matches_played')
     matches_intended = models.ManyToManyField(Match, related_name='matches_intended')
+    user = models.OneToOneField(User, )
+
 
     def clean(self):
         cell_phone_template = "(([+]7)|8)\d{10}"
