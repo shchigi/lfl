@@ -1,5 +1,6 @@
 #coding=utf-8
 # Create your views here.
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate
 from django.http import HttpResponse
@@ -39,10 +40,10 @@ def login(request):
 def index(request):
     return render_to_response('index.html')
 
-
+@login_required()
 def roster(request):
-    #Change to pick custom team, not only Phystech
-    team = Team.objects.get(name='Физтех')
+    person = request.user.person
+    team = Team.objects.get(name=person.team)
     players = Person.objects.filter(team=team).order_by('first_name')
 
     team_name = team.name
@@ -53,5 +54,5 @@ def roster(request):
 
 def player_details(request, player_id):
     player = Person.objects.get(id=int(player_id))
-    return  render_to_response('player.html',
-                               {'player': player})
+    return render_to_response('player.html',
+                              {'player': player})

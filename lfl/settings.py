@@ -155,4 +155,5 @@ LOGGING = {
     }
 }
 
-LOGIN_REDIRECT_URL = '/roster/'
+# LOGIN_REDIRECT_URL = '/roster/'
+LOGIN_URL = '/login/'
