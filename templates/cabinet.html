@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Личный кабинет</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static "style.css" %}"/>
+</head>
+<body>
+
+    <h3>Предстоящие матчи:</h3>
+{#    <ol>#}
+        <div class="upcoming_plays">
+        {% for match in matches  %}
+{#            <li>#}
+              <div class="upcoming_plays_row">
+                    <div class="play_column">
+                        {{ match.home_team }} - {{ match.guest_team }}
+                    </div>
+
+                    <div class="switch_column">
+                        <div class="onoffswitch">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch_{{ forloop.counter }}" checked/>
+                            <label class="onoffswitch-label" for="myonoffswitch_{{ forloop.counter }}">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+
+
+              </div>
+         {% endfor %}
+         </div>
+{#              <div style="clear:both;"></div>#}
+{#            </li>#}
+
+{#    </ol>#}
+</body>
+</html>
