@@ -32,6 +32,12 @@ def cabinet(request):
                               {'matches': matches})
 
 
+@login_required()
+def cabinet_update_model(request):
+    print request.POST.items()
+    return HttpResponse("OK", status=200)
+
+
 def player_details(request, player_id):
     player = Person.objects.get(id=int(player_id))
     return render_to_response('player.html',

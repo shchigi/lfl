@@ -13,10 +13,13 @@ urlpatterns = patterns('',
     url(r'^roster/$',
         'plays.views.roster'),
 
-    url(r'^roster/(?P<player_id>\d+)/',
+    url(r'^roster/(?P<player_id>\d+)/$',
         'plays.views.player_details'),
 
-    url(r'^cabinet/',
-        'plays.views.cabinet')
+    url(r'^cabinet/$',
+        'plays.views.cabinet'),
+
+    url(r'^cabinet/update_model/$',
+        'plays.views.cabinet_update_model')
 
 )
