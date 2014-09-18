@@ -1,0 +1,24 @@
+@import "switch_style.css";
+
+.upcoming_plays {
+    display: table;
+    overflow: hidden;
+}
+
+    .upcoming_plays_row {
+        display: table-row;
+    }
+
+        .play_column {
+            display: table-cell;
+            vertical-align: middle;
+            padding-bottom:2px;
+            padding-top: 2px;
+            padding-right: 10px;
+        }
+
+        .switch_column {
+            display: table-cell;
+            padding-bottom:2px;
+            padding-top: 2px;
+        }

@@ -3,15 +3,17 @@
 <head>
     <title>Личный кабинет</title>
     {% load staticfiles %}
-    <link rel="stylesheet" type="text/css" href="{% static "style.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "styles/style.css" %}"/>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="{% static "scripts/cabinet_update_intention_matches.js" %}"></script>
+
+
 </head>
 <body>
 
     <h3>Предстоящие матчи:</h3>
-{#    <ol>#}
         <div class="upcoming_plays">
         {% for match in matches  %}
-{#            <li>#}
               <div class="upcoming_plays_row">
                     <div class="play_column">
                         {{ match.home_team }} - {{ match.guest_team }}
@@ -19,21 +21,18 @@
 
                     <div class="switch_column">
                         <div class="onoffswitch">
-                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch_{{ forloop.counter }}" checked/>
-                            <label class="onoffswitch-label" for="myonoffswitch_{{ forloop.counter }}">
+                            <input type="checkbox" class="onoffswitch-checkbox" id="{{ match.id }}" checked/>
+                            <label class="onoffswitch-label" for="{{ match.id }}">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
                             </label>
                         </div>
                     </div>
-
-
               </div>
          {% endfor %}
          </div>
-{#              <div style="clear:both;"></div>#}
-{#            </li>#}
 
-{#    </ol>#}
+
+
 </body>
 </html>

@@ -1,7 +1,7 @@
 /*Genarated with http://proto.io/freebies/onoff/ */
 
 .onoffswitch {
-    position: relative; width: 73px;
+    position: relative; width: 120px;
     -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
     float: inherit;
 }
@@ -28,13 +28,13 @@
 }
 
 .onoffswitch-inner:before {
-    content: "ON";
-    padding-left: 11px;
+    content: "Пойду";
+    padding-left: 30px;
     background-color: #27A600; color: #FFFFFF;
 }
 
 .onoffswitch-inner:after {
-    content: "OFF";
+    content: "Не пойду";
     padding-right: 11px;
     background-color: #E60000; color: #FFFFFF;
     text-align: right;
@@ -44,7 +44,7 @@
     display: block; width: 18px; margin: 3.5px;
     background: #FFFFFF;
     border: 2px solid #999999; border-radius: 20px;
-    position: absolute; top: 0; bottom: 0; right: 44px;
+    position: absolute; top: 0; bottom: 0; right: 87px;
     -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
     -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
 }
