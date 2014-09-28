@@ -53,8 +53,7 @@ class Person(models.Model, ):
     team = models.ForeignKey(Team)
     matches_played = models.ManyToManyField(Match, related_name='matches_played')
     matches_intended = models.ManyToManyField(Match, related_name='matches_intended')
-    user = models.OneToOneField(User, )
-
+    user = models.OneToOneField(User)
 
     def clean(self):
         cell_phone_template = "(([+]7)|8)\d{10}"

@@ -18,7 +18,7 @@
 
                     <div class="switch_column">
                         <div class="onoffswitch">
-                            <input type="checkbox" class="onoffswitch-checkbox" id="{{ match.id }}" checked/>
+                            <input type="checkbox" class="onoffswitch-checkbox" id="{{ match.id }}" {{ match.intended }}/>
                             <label class="onoffswitch-label" for="{{ match.id }}">
                                 <span class="onoffswitch-inner"></span>
                                 <span class="onoffswitch-switch"></span>
@@ -34,13 +34,13 @@
 
     <script>
         $(document).ready(function(){
-            $(window).unload(function(){
+            $(window).on('beforeunload', function(){
 
                 var inputs = $('.onoffswitch-checkbox');
                 var values = [];
                 var values2 = {};
 
-                console.log(values);
+{#                console.log(values);#}
 
                 inputs.each(function() {
                         values.push($(this).prop("checked"));
@@ -48,8 +48,9 @@
                     }
                 );
 
-                console.log(values);
-                console.log(values2);
+
+{#                console.log(values);#}
+{#                console.log(values2);#}
                 var csrftoken = getCookie('csrftoken');
 
                 $.ajax({
