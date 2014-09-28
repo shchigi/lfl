@@ -20,6 +20,9 @@ urlpatterns = patterns('',
         'plays.views.cabinet'),
 
     url(r'^cabinet/update_model/$',
-        'plays.views.cabinet_update_model')
+        'plays.views.cabinet_update_model'),
+
+    url(r'^cabinet/matches/$',
+        'plays.views.cabinet_all_matches')
 
 )

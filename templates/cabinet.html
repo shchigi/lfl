@@ -9,14 +9,14 @@
 {% block content %}
 
     <h3>Предстоящие матчи:</h3>
-        <div class="upcoming_plays">
+        <div class="matches_intended_table" id="matches">
         {% for match in matches  %}
-              <div class="upcoming_plays_row">
-                    <div class="play_column">
+              <div class="matches_intended_row">
+                    <div class="matches_intended_left_column">
                         {{ match.home_team }} - {{ match.guest_team }}
                     </div>
 
-                    <div class="switch_column">
+                    <div class="matches_intended_right_column">
                         <div class="onoffswitch">
                             <input type="checkbox" class="onoffswitch-checkbox" id="{{ match.id }}" {{ match.intended }}/>
                             <label class="onoffswitch-label" for="{{ match.id }}">

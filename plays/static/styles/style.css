@@ -1,15 +1,15 @@
 @import "switch_style.css";
 
-.upcoming_plays {
+.matches_intended_table {
     display: table;
     overflow: hidden;
 }
 
-    .upcoming_plays_row {
+    .matches_intended_row {
         display: table-row;
     }
 
-        .play_column {
+        .matches_intended_left_column {
             display: table-cell;
             vertical-align: middle;
             padding-bottom:2px;
@@ -17,7 +17,48 @@
             padding-right: 10px;
         }
 
-        .switch_column {
+        .matches_intended_right_column {
+            display: table-cell;
+            padding-bottom:2px;
+            padding-top: 2px;
+        }
+
+
+.matches_all_table {
+    display: table;
+    overflow: hidden;
+}
+
+    .matches_played_row {
+        display: table-row;
+        background-color: rgba(26,255,00, 0.5);
+    }
+
+    .matches_absent_row {
+        display: table-row;
+        background-color: rgba(255, 66, 00, 0.5);
+    }
+
+    .matches_today_row {
+        display: table-row;
+        background-color: rgba(255, 215, 0, 0.5);
+        font-weight: bold;
+    }
+
+    .matches_future_row {
+        display: table-row;
+        background-color: rgba(0, 132, 255, 0.5);
+    }
+
+        .matches_left_column {
+            display: table-cell;
+            vertical-align: middle;
+            padding-bottom:2px;
+            padding-top: 2px;
+            padding-right: 10px;
+        }
+
+        .matches_right_column {
             display: table-cell;
             padding-bottom:2px;
             padding-top: 2px;

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static "styles/style.css" %}"/>
+{% endblock %}
+
+{% block content %}
+
+    <div id="matches" class="matches_intended_table">
+        {% for match in matches %}
+            <div class="matches_{{ match.type }}_row">
+                <div class="matches_intended_left_column">{{ match.date }}</div>
+                <div class="matches_intended_right_column">{{ match.home_team }} - {{ match.guest_team }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}
