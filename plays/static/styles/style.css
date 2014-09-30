@@ -1,5 +1,11 @@
 @import "switch_style.css";
 
+
+p.plain-text {
+   line-height: 100%;
+}
+
+
 .matches_intended_table {
     display: table;
     overflow: hidden;

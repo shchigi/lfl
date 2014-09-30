@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
+from django.views.decorators.cache import cache_control
 
 from plays.models import Team, Person, Match
 
@@ -26,19 +27,27 @@ def roster(request):
 
 
 @login_required()
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def cabinet(request):
+    print "cabinet hit"
     person = request.user.person
-    matches = Match.objects.filter(Q(home_team=person.team) | Q(guest_team=person.team))
+    now = datetime.now()
+    matches = Match.objects.filter(Q(home_team=person.team) | Q(guest_team=person.team), date__gte=now.date()).\
+        order_by('date')[0:3]
     for match in matches:
-        match.intended = "checked" if match in person.matches_intended.all() else ""
+        match.intended = True if match in person.matches_intended.all() else False
+
+    person.goals = Goal.objects.filter(player_scored=person).count()
+    person.assists = Goal.objects.filter(player_assisted=person).count()
 
     return render_to_response('cabinet.html',
-                              {'matches': matches})
+                              {'person': person,
+                               'matches': matches})
 
 
 @login_required()
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def cabinet_update_model(request):
-    print request.POST.items()
     person = request.user.person
     for item in request.POST.items():
         if item[1] == "true":  # obtained from ajax in cabinet.html
@@ -55,38 +64,40 @@ def cabinet_update_model(request):
 
 @login_required()
 def cabinet_all_matches(request):
+    print "cabinet matches hit  "
     match_today = None
     person = request.user.person
     now = datetime.now()
     matches_played = person.matches_played.all()
     matches_absent = Match.objects.filter(date__lt=now.date()).\
         exclude(id__in=matches_played.values_list('id', flat=True))
+
+    match_list_past = []
+
     try:
         match_today = Match.objects.get(date=now.date())
+        match_today.type = "today"
     except ObjectDoesNotExist:
         pass
     matches_future = Match.objects.filter(date__gt=now.date())
 
-    match_list = []
+    # if changing type here, change type in corresponding template
     for e in matches_played:
         e.type = "played"
-        match_list.append(e)
+        match_list_past.append(e)
 
     for e in matches_absent:
         e.type = "absent"
-        match_list.append(e)
+        match_list_past.append(e)
 
     for e in matches_future:
         e.type = "future"
-        match_list.append(e)
+        e.intended = "checked" if e in person.matches_intended.all() else ""
 
-    match_today.type = "today"
-    match_list.append(match_today)
-
-    match_list.sort(key=lambda x: x.date)
-    print match_list
+    match_list_past.sort(key=lambda x: x.date)
     return render_to_response('cabinet_matches.html',
-                              {'matches': match_list,
+                              {'matches_past': match_list_past,
+                               'matches_future': matches_future,
                                'match_today': match_today})
 
 

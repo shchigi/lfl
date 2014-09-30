@@ -1,0 +1,10 @@
+<div class="matches_intended_right_column">
+    <div class="onoffswitch">
+        <input type="checkbox" class="onoffswitch-checkbox" id="{{ match.id }}"
+                {% if match.intended %} checked {% else %}{% endif %} autocomplete="off"/>
+        <label class="onoffswitch-label" for="{{ match.id }}">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+        </label>
+    </div>
+</div>

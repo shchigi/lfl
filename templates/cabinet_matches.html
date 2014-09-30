@@ -8,18 +8,40 @@
 {% block content %}
 
     <div id="matches" class="matches_intended_table">
-        {% for match in matches %}
+        {% for match in matches_past %}
             <div class="matches_{{ match.type }}_row">
-                <div class="matches_intended_left_column">{{ match.date }}</div>
-                <div class="matches_intended_right_column">{{ match.home_team }} - {{ match.guest_team }}</div>
+                <div class="matches_left_column">{{ match.date }}</div>
+                <div class="matches_right_column">{{ match.home_team }} - {{ match.guest_team }}</div>
             </div>
         {% endfor %}
+
+        {% if match_today %}
+            <div class="matches_{{ match_today.type }}_row">
+                <div class="matches_left_column">{{ match.date }}</div>
+                <div class="matches_right_column">{{ match.home_team }} - {{ match.guest_team }}</div>
+            </div>
+        {% endif %}
+
+        {% for match in matches_future %}
+            <div class="matches_{{ match.type }}_row">
+                <div class="matches_left_column">{{ match.date }}</div>
+                <div class="matches_left_column">{{ match.home_team }} - {{ match.guest_team }}</div>
+                {% include "switches.html" with match=match %}
+            </div>
+        {% endfor %}
+
+
     </div>
 
 
 
 {% endblock %}
 
+
 {% block scripts %}
+
+    {% include "save_switch.html" %}
+
+    <script src="{% static "scripts/getCookie.js" %} "></script>
 
 {% endblock %}

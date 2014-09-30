@@ -8,82 +8,33 @@
 
 {% block content %}
 
-    <h3>Предстоящие матчи:</h3>
+    <div class="about player">
+        <h3>{{ person.first_name }} {{ person.last_name }}</h3>
+        <p class="plain-text">Всего голов: {{ person.goals }}<br/>
+        Всего передач: {{ person.assists }}</p>
+
+    </div>
+
+    <h3>Ближайшие матчи:</h3>
         <div class="matches_intended_table" id="matches">
         {% for match in matches  %}
-              <div class="matches_intended_row">
-                    <div class="matches_intended_left_column">
-                        {{ match.home_team }} - {{ match.guest_team }}
-                    </div>
-
-                    <div class="matches_intended_right_column">
-                        <div class="onoffswitch">
-                            <input type="checkbox" class="onoffswitch-checkbox" id="{{ match.id }}" {{ match.intended }}/>
-                            <label class="onoffswitch-label" for="{{ match.id }}">
-                                <span class="onoffswitch-inner"></span>
-                                <span class="onoffswitch-switch"></span>
-                            </label>
-                        </div>
-                    </div>
-              </div>
-         {% endfor %}
+            <div class="matches_intended_row">
+                <div class="matches_intended_left_column">{{ match.home_team }} - {{ match.guest_team }}</div>
+                {% include "switches.html" with match=match %}
+            </div>
+        {% endfor %}
          </div>
+
+        <div>
+            <a href="{% url 'plays.views.cabinet_all_matches' %}">Все матчи</a>
+        </div>
+
 {% endblock %}
 
 {% block scripts %}
 
-    <script>
-        $(document).ready(function(){
-            $(window).on('beforeunload', function(){
+    {% include "save_switch.html" %}
 
-                var inputs = $('.onoffswitch-checkbox');
-                var values = [];
-                var values2 = {};
-
-{#                console.log(values);#}
-
-                inputs.each(function() {
-                        values.push($(this).prop("checked"));
-                        values2[$(this).attr('id')] = $(this).prop("checked");
-                    }
-                );
-
-
-{#                console.log(values);#}
-{#                console.log(values2);#}
-                var csrftoken = getCookie('csrftoken');
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{% url 'plays.views.cabinet_update_model' %}',
-                    async: false,
-                    headers: {
-                        "X-CSRFToken": csrftoken
-                    },
-                    data: values2
-                });
-            });
-        });
-
-    </script>
-
-    <script>
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-    </script>
-
+    <script src="{% static "scripts/getCookie.js" %} "></script>
 
 {% endblock %}
