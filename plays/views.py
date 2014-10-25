@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_control
 
-from plays.models import Team, Person, Match
+from plays.models import Team, Person, Match, Goal, Card
 
 
 def index(request):
@@ -46,7 +46,6 @@ def cabinet(request):
 
 
 @login_required()
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def cabinet_update_model(request):
     person = request.user.person
     for item in request.POST.items():
@@ -63,8 +62,8 @@ def cabinet_update_model(request):
 
 
 @login_required()
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def cabinet_all_matches(request):
-    print "cabinet matches hit  "
     match_today = None
     person = request.user.person
     now = datetime.now()
@@ -105,3 +104,17 @@ def player_details(request, player_id):
     player = Person.objects.get(id=int(player_id))
     return render_to_response('player.html',
                               {'player': player})
+
+@login_required()
+def match_details(request, id):
+    match = Match.objects.get(id=id)
+    cards = Card.objects.filter(match=match).order_by("minute")
+    goals = Goal.objects.filter(match=match).order_by("minute")
+    players_home = Person.objects.filter(team=match.home_team).filter(matches_played__in=[match])
+    players_guest = Person.objects.filter(team=match.guest_team).filter(matches_played__in=[match])
+    return render_to_response('match_details.html',
+                              {'match': match,
+                               'cards': cards,
+                               'goals': goals,
+                               'players_home': players_home,
+                               'players_guest': players_guest})

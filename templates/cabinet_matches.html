@@ -11,7 +11,7 @@
         {% for match in matches_past %}
             <div class="matches_{{ match.type }}_row">
                 <div class="matches_left_column">{{ match.date }}</div>
-                <div class="matches_right_column">{{ match.home_team }} - {{ match.guest_team }}</div>
+                <div class="matches_right_column"><a href={% url 'plays.views.match_details' id=match.id %}>{{ match.home_team }} - {{ match.guest_team }}</a></div>
             </div>
         {% endfor %}
 

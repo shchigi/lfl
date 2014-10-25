@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <div id="match_header">
+        {{ match.home_team }} {{ match.home_team_score }}:{{ match.guest_team_score }} {{ match.guest_team }}
+    </div>
+
+    <div id="match_events">
+        <div id="goals">
+            Голы:
+            <ul>
+                {% for goal in goals %}
+                    <li>{{ goal.serialize_to_text }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div id="cards">
+            Карточки:
+            <ul>
+                {% for card in cards %}
+                    <li>{{ card.serialize_to_text }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="players_table" id="home">
+        {{ match.home_team.name }}:
+        <ul>
+            {% for home_player in players_home %}
+            <div class="players_row">
+                <li>{{ home_player.serialize_to_text }}</li>
+            </div>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="players_table" id="guest">
+        {{ match.guest_team.name }}:
+        <ul>
+            {% for guest_player in players_guest %}
+            <div class="players_row">
+                <li>{{ guest_player.serialize_to_text }}</li>
+            </div>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+
+{% endblock %}

@@ -1,13 +1,25 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from abc import abstractmethod
 
 import re
 
 
-class Team(models.Model):
+class SerializableToText():
+
+    def serialize_to_text(self):
+        return self.__unicode__()
+
+    @abstractmethod
+    def __unicode__(self):
+        return
+
+
+class Team(models.Model, SerializableToText):
     name = models.CharField(max_length=255, null=False, blank=False)
     start_date = models.DateField(null=True, blank=True)
 
@@ -15,7 +27,7 @@ class Team(models.Model):
         return self.name
 
 
-class Match(models.Model):
+class Match(models.Model, SerializableToText):
     date = models.DateField(null=True, blank=True)
     time = models.TimeField(null=True, blank=True)
     home_team = models.ForeignKey(Team, related_name="home_team", null=False, blank=False)
@@ -23,11 +35,20 @@ class Match(models.Model):
     home_team_score = models.PositiveSmallIntegerField(null=False, blank=True, default=0)
     guest_team_score = models.PositiveSmallIntegerField(null=False, blank=True,  default=0)
 
+    def clean(self):
+        goals_home_number = Goal.objects.filter(Q(player_scored__team=self.home_team, own_goal=False, match=self) |
+                                                Q(player_scored__team=self.guest_team, own_goal=True, match=self)).count()
+        goals_guest_number = Goal.objects.filter(Q(player_scored__team=self.guest_team, own_goal=False, match=self) |
+                                                Q(player_scored__team=self.home_team, own_goal=True, match=self)).count()
+        if self.home_team_score != goals_home_number:
+            raise ValidationError("Match %s score is corrupted. Score should " % self.serialize_to_text())
+        return
+
     def __unicode__(self):
         return unicode("%s - %s" % (self.home_team.name, self.guest_team.name))
 
 
-class Person(models.Model, ):
+class Person(models.Model, SerializableToText):
     GOALKEEPER = 'G'
     BACK = 'B'
     HALFBACK = 'H'
@@ -64,13 +85,16 @@ class Person(models.Model, ):
         return unicode("%(name)s %(sirname)s" % {"name": self.first_name, "sirname": self.last_name})
 
 
-class Goal(models.Model):
+class Goal(models.Model, SerializableToText):
     player_scored = models.ForeignKey(Person, null=False, related_name="player_scored")
     player_assisted = models.ForeignKey(Person, null=True, blank=True, related_name="player_assisted")
     own_goal = models.BooleanField(default=False)
     match = models.ForeignKey(Match, null=False, blank=False)
     minute = models.PositiveSmallIntegerField(null=True, blank=True)
     is_penalty = models.BooleanField(default=False, null=False)
+
+    # def serialize_goal_to_text(self):
+    #     return self.__unicode__()
 
     def __unicode__(self):
         assisted = (" (%s)" % (self.player_assisted.last_name,)) if self.player_assisted else ""
@@ -112,7 +136,7 @@ class Goal(models.Model):
         super(Goal, self).delete(*args, **kwargs)
 
 
-class Card (models.Model):
+class Card (models.Model, SerializableToText):
     RED = 'R'
     YELLOW = 'Y'
     CARD_TYPES = (
@@ -123,6 +147,7 @@ class Card (models.Model):
     type = models.CharField(max_length=1, choices=CARD_TYPES)
     person = models.ForeignKey(Person, null=False, blank=False)
     minute = models.PositiveSmallIntegerField(null=True, blank=True)
+    match = models.ForeignKey(Match, null=False, blank=False)
 
     def __unicode__(self):
         card_type = unicode(" (%s)" % self.type)

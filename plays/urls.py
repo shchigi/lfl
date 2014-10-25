@@ -23,6 +23,9 @@ urlpatterns = patterns('',
         'plays.views.cabinet_update_model'),
 
     url(r'^cabinet/matches/$',
-        'plays.views.cabinet_all_matches')
+        'plays.views.cabinet_all_matches'),
+
+    url(r'^cabinet/matches/(?P<id>\d+)/$',
+        'plays.views.match_details')
 
 )

@@ -69,3 +69,26 @@ p.plain-text {
             padding-bottom:2px;
             padding-top: 2px;
         }
+
+.players_table {
+    display: table;
+    overflow: hidden;
+}
+
+    .players_row {
+        display: table-row;
+        background-color: rgba(26,255,00, 0.5);
+    }
+        .player_home_team_column {
+            display: table-cell;
+            vertical-align: middle;
+            padding-bottom:2px;
+            padding-top: 2px;
+            padding-right: 10px;
+        }
+
+        .player_guest_team_column {
+            display: table-cell;
+            padding-bottom:2px;
+            padding-top: 2px;
+        }

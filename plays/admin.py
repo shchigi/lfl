@@ -14,8 +14,10 @@ class MatchAdmin(admin.ModelAdmin):
 class TeamAdmin(admin.ModelAdmin):
     pass
 
+
 class CardAdmin(admin.ModelAdmin):
     pass
+
 
 class GoalAdmin(admin.ModelAdmin):
     pass
