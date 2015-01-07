@@ -26,6 +26,10 @@ urlpatterns = patterns('',
         'plays.views.cabinet_all_matches'),
 
     url(r'^cabinet/matches/(?P<id>\d+)/$',
-        'plays.views.match_details')
+        'plays.views.match_details'),
+
+    url(r'^cabinet/matches/(?P<id>\d+)/goal/$',
+        'plays.views.match_details_add_item',
+        {'item': 'goal'})
 
 )

@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static "styles/style.css" %}"/>
+{% endblock %}
+
+
 {% block content %}
     <div id="match_header">
         {{ match.home_team }} {{ match.home_team_score }}:{{ match.guest_team_score }} {{ match.guest_team }}
@@ -25,28 +31,19 @@
         </div>
     </div>
 
-    <div class="players_table" id="home">
-        {{ match.home_team.name }}:
-        <ul>
-            {% for home_player in players_home %}
-            <div class="players_row">
-                <li>{{ home_player.serialize_to_text }}</li>
-            </div>
-            {% endfor %}
-        </ul>
-    </div>
+    {% include 'match_details_roster.html' with id='home' team=match.home_team players=players_home is_staff=home_is_stuff %}
+    <br/>
+    {% include 'match_details_roster.html' with id='guest' team=match.guest_team players=players_guest is_staff=guest_is_staff %}
 
-    <div class="players_table" id="guest">
-        {{ match.guest_team.name }}:
-        <ul>
-            {% for guest_player in players_guest %}
-            <div class="players_row">
-                <li>{{ guest_player.serialize_to_text }}</li>
-            </div>
-            {% endfor %}
-        </ul>
-    </div>
-
-
+    {% if user.is_staff %}
+        <h2>
+            Admin:
+            {% if is_user_home %}
+                {{ match.home_team.name }}
+            {% else %}
+                {{ match.guest_team.name }}
+            {% endif %}
+        </h2>
+    {% endif %}
 
 {% endblock %}

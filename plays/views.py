@@ -2,6 +2,7 @@
 # Create your views here.
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+from django.core.context_processors import csrf
 from django.db.models import Q
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
@@ -93,11 +94,13 @@ def cabinet_all_matches(request):
         e.type = "future"
         e.intended = "checked" if e in person.matches_intended.all() else ""
 
+    resp_dict = {'matches_past': match_list_past,
+                               'matches_future': matches_future,
+                               'match_today': match_today}
+
     match_list_past.sort(key=lambda x: x.date)
     return render_to_response('cabinet_matches.html',
-                              {'matches_past': match_list_past,
-                               'matches_future': matches_future,
-                               'match_today': match_today})
+                              resp_dict)
 
 
 def player_details(request, player_id):
@@ -105,16 +108,44 @@ def player_details(request, player_id):
     return render_to_response('player.html',
                               {'player': player})
 
+
+def match_details_add_item(request, match_id, item):
+    print item
+    pass
+
+
+
 @login_required()
 def match_details(request, id):
     match = Match.objects.get(id=id)
     cards = Card.objects.filter(match=match).order_by("minute")
     goals = Goal.objects.filter(match=match).order_by("minute")
-    players_home = Person.objects.filter(team=match.home_team).filter(matches_played__in=[match])
-    players_guest = Person.objects.filter(team=match.guest_team).filter(matches_played__in=[match])
+    players_home_played = Person.objects.filter(team=match.home_team).filter(matches_played__in=[match])
+    players_guest_played = Person.objects.filter(team=match.guest_team).filter(matches_played__in=[match])
+
+    resp_dict = {'match': match,
+                 'cards': cards,
+                 'goals': goals,
+                 'players_home': players_home_played,
+                 'players_guest': players_guest_played}
+
+    is_user_home = request.user.person in Person.objects.filter(team=match.home_team)
+    resp_dict['is_user_home'] = is_user_home
+    resp_dict['user'] = request.user
+
+    user_team = match.home_team if is_user_home else match.guest_team
+
+    home_is_staff = False
+    guest_is_staff = False
+
+
+    # Admin section
+    if request.user.is_staff:
+        home_is_staff = is_user_home
+        guest_is_staff = not is_user_home
+
+    resp_dict['home_is_stuff'] = home_is_staff
+    resp_dict['guest_is_staff'] = guest_is_staff
+    resp_dict.update(csrf(request))
     return render_to_response('match_details.html',
-                              {'match': match,
-                               'cards': cards,
-                               'goals': goals,
-                               'players_home': players_home,
-                               'players_guest': players_guest})
+                              resp_dict)
