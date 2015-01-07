@@ -79,15 +79,16 @@ p.plain-text {
         display: table-row;
         background-color: rgba(26,255,00, 0.5);
     }
-        .player_home_team_column {
+        .player_name_column {
             display: table-cell;
             vertical-align: middle;
             padding-bottom:2px;
             padding-top: 2px;
             padding-right: 10px;
+            padding-left: 20px;
         }
 
-        .player_guest_team_column {
+        .player_stat_column {
             display: table-cell;
             padding-bottom:2px;
             padding-top: 2px;
