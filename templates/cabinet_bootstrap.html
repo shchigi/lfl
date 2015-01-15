@@ -1,12 +1,21 @@
-{% extends 'base_bootstrap.html' %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 
 {% block css %}
-    <link rel="stylesheet" type="text/css" href="{% static "plays/css/style.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "styles/style.css" %}"/>
 {% endblock %}
 
 
-{% block contents %}
+{% block content %}
+
+    <div id="dashboard-header" class="row">
+        <div class="col-xs-10">
+            <h3>Добро пожаловать в личный кабинет!</h3>
+        </div>
+
+    </div>
+
+
 
     <div class="about player">
         <h3>{{ person.first_name }} {{ person.last_name }}</h3>
@@ -35,6 +44,6 @@
 
     {% include "save_switch.html" %}
 
-    <script src="{% static "plays/js/getCookie.js" %} "></script>
+    <script src="{% static "scripts/getCookie.js" %} "></script>
 
 {% endblock %}

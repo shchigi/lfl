@@ -149,3 +149,9 @@ def match_details(request, id):
     resp_dict.update(csrf(request))
     return render_to_response('match_details.html',
                               resp_dict)
+
+
+def bootstrap(request):
+    name = request.user.person.first_name
+    return render_to_response('base_bootstrap.html',
+        {'name': name})
