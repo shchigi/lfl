@@ -8,6 +8,7 @@ from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_control
+from plays.forms import PersonForm
 
 from plays.models import Team, Person, Match, Goal, Card
 
@@ -114,6 +115,22 @@ def match_details_add_item(request, match_id, item):
     pass
 
 
+def player_settings(request):
+    if request.method == "GET":
+        player = request.user.person
+        form = PersonForm({'first_name': player.first_name,
+                           'last_name': player.last_name,
+                           'position': player.position,
+                           'cell_phone': player.cell_phone,
+                           'email': player.email})
+        params = {'form': form}
+        params.update(csrf(request))
+        return render_to_response('settings.html', params)
+    elif request.method == "POST":
+        return HttpResponse("OK", status=200)
+
+
+
 
 @login_required()
 def match_details(request, id):
@@ -123,15 +140,15 @@ def match_details(request, id):
     players_home_played = Person.objects.filter(team=match.home_team).filter(matches_played__in=[match])
     players_guest_played = Person.objects.filter(team=match.guest_team).filter(matches_played__in=[match])
 
-    resp_dict = {'match': match,
+    params = {'match': match,
                  'cards': cards,
                  'goals': goals,
                  'players_home': players_home_played,
                  'players_guest': players_guest_played}
 
     is_user_home = request.user.person in Person.objects.filter(team=match.home_team)
-    resp_dict['is_user_home'] = is_user_home
-    resp_dict['user'] = request.user
+    params['is_user_home'] = is_user_home
+    params['user'] = request.user
 
     user_team = match.home_team if is_user_home else match.guest_team
 
@@ -144,14 +161,15 @@ def match_details(request, id):
         home_is_staff = is_user_home
         guest_is_staff = not is_user_home
 
-    resp_dict['home_is_stuff'] = home_is_staff
-    resp_dict['guest_is_staff'] = guest_is_staff
-    resp_dict.update(csrf(request))
+    params['home_is_staff'] = home_is_staff
+    params['guest_is_staff'] = guest_is_staff
+    params.update(csrf(request))
     return render_to_response('match_details.html',
-                              resp_dict)
+                              params)
 
 
 def bootstrap(request):
     name = request.user.person.first_name
-    return render_to_response('base_bootstrap.html',
-        {'name': name})
+    params = {'name': name}
+    params.update(csrf(request))
+    return render_to_response('base_bootstrap.html', params)

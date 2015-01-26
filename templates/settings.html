@@ -1,0 +1,23 @@
+{% extends 'base_bootstrap.html' %}
+{% load staticfiles %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static "plays/css/style.css" %}"/>
+{% endblock %}
+
+
+
+{% block contents %}
+<h3>Настройки</h3>
+<form action="{% url 'plays.views.player_settings' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Обновить"/>
+</form>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+{% endblock %}

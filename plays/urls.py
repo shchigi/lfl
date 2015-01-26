@@ -32,6 +32,9 @@ urlpatterns = patterns('',
         'plays.views.match_details_add_item',
         {'item': 'goal'}),
 
+    url(r'^cabinet/settings/$',
+        'plays.views.player_settings'),
+
     url(r'^bootstrap/$', 'plays.views.bootstrap')
 
 )
